@@ -31,7 +31,7 @@ jobs:
       run: |
         # Assuming you have a test file, or you can add one later.
         # You might need to modify the paths or test cases as required
-        pytest /src/csv_app.py # Run tests with pytest (if you have any tests)
+        pytest src/csv_app.py # Run tests with pytest (if you have any tests)
 
     - name: Check if the app runs without errors
       run: |
