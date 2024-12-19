@@ -3,6 +3,23 @@ import os
 import pandas as pd
 from tkinter import filedialog
 
+# lst = 
+# [['date-inputted', []],
+#  ['date-resolved', []],
+#  ['item-name', []],
+#  ['item-barcode', []],
+#  ['item-final-update', []],
+#  ['item-issue', []],
+#  ['item-note', []],
+#  ['customer-name', []],
+#  ['customer-barcode', []],
+#  ['customer-phone', []],
+#  ['customer-email', []],
+#  ['customer-note', []],
+#  ['customer-contacted', []],
+#  ['last-customer-name', []],
+#  ['last-customer-barcode', []]]
+
 
 # Preview CSV pop-up window
 class PreviewCSV(customtkinter.CTkToplevel):
@@ -67,12 +84,27 @@ class NewCSV(customtkinter.CTkToplevel):
         self.parent = parent
 
         self.title("New CSV")
-        self.geometry("600x400")
-        self.grid_columnconfigure(0, weight=1)
-        self.grid_rowconfigure(0, weight=1)
+        self.geometry("400x800")
 
         self.attributes("-topmost", 1)
         self.lift()
+        
+        self.input_keys = parent.csv_df.columns.tolist()
+        print(self.input_keys)
+        self.input_keys_rows = tuple(index for index, _ in enumerate(self.input_keys))
+        self.input_keys_rows += (self.input_keys_rows[-1] + 1,)
+        
+        self.input_values = []
+        
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(self.input_keys_rows, weight=1)
+        
+        self.new_csv_label = customtkinter.CTkLabel(self, text="New AV Issues CSV")
+        self.new_csv_label.grid(row=0, column=0, padx=10, pady=10, sticky="new")
+        
+        for k in range(len(self.input_keys)):
+            input_value_entry = customtkinter.CTkEntry(self, placeholder_text=self.input_keys[k])
+            input_value_entry.grid(row=k+1, column=0, padx=10, pady=10, sticky="ew")
 
 
 # Buttons for the App
