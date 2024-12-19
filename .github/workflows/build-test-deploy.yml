@@ -1,0 +1,22 @@
+name: AV App
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+    run-python-script:
+        runs-on: ubuntu-latest
+
+        steps:
+          - name: Checkout code
+            uses: actions/checkout@v2
+        
+          - name: Set up Python
+            uses: actions/setup-python@v5
+            with:
+                python-version: '3.13.1'
+        
+          - name: Run print_requirements.py
+            run: python print_requirements.py
