@@ -4,6 +4,32 @@ import pandas as pd
 from tkinter import filedialog
 
 
+# Preview CSV pop-up window
+class PreviewCSV(customtkinter.CTkToplevel):
+    def __init__(self, master, parent):
+        # Set inheritences
+        super().__init__(master)
+        self.parent = parent
+        
+        self.title('Preview CSV')
+        self.geometry('600x400')
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure((0, 1), weight=1)
+        
+        # Make the new window always float on top
+        self.attributes('-topmost', 1)
+        self.lift()
+        
+        # TO-DO: Update this
+        self.segmented_button = customtkinter.CTkSegmentedButton(self, values=['Row1', 'Row2', 'Row3'])
+        self.segmented_button.grid(row=0, column=0, padx=10, pady=10, sticky='nsew')
+        
+        # Show the CSV in a textbox
+        self_textbox = customtkinter.CTkTextbox(self, font=customtkinter.CTkFont(family='Consolas'), corner_radius=4)
+        self_textbox.grid(row=1, column=0, padx=10, pady=10, sticky='nsew')
+        self_textbox.insert('0.0', self.parent.csv_df.loc[0])
+
+
 # Buttons for the App
 class OpenShowCSVFrame(customtkinter.CTkFrame):
     def __init__(self, master, parent):
@@ -66,25 +92,7 @@ class OpenShowCSVFrame(customtkinter.CTkFrame):
     # Preview CSV window
     def preview_csv_window(self):
         print('Success opening CSV preview window.')
-        # Create the preview window
-        self.preview_window = customtkinter.CTkToplevel()
-        self.preview_window.title('Preview CSV')
-        self.preview_window.geometry('600x400')
-        self.preview_window.grid_columnconfigure(0, weight=1)
-        self.preview_window.grid_rowconfigure((0, 1), weight=1)
-        
-        # Make the new window always float on top
-        self.preview_window.attributes('-topmost', 1)
-        self.preview_window.lift()
-        
-        # TO-DO: Update this
-        self.segmented_button = customtkinter.CTkSegmentedButton(self.preview_window, values=['Row1', 'Row2', 'Row3'])
-        self.segmented_button.grid(row=0, column=0, padx=10, pady=10, sticky='nsew')
-        
-        # Show the CSV in a textbox
-        self.preview_window_textbox = customtkinter.CTkTextbox(self.preview_window, font=customtkinter.CTkFont(family='Consolas'), corner_radius=4)
-        self.preview_window_textbox.grid(row=1, column=0, padx=10, pady=10, sticky='nsew')
-        self.preview_window_textbox.insert('0.0', self.parent.csv_df.head())
+        self.preview_window = PreviewCSV(self, self.parent)
 
 
 # CSV Reader App
