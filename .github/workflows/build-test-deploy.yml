@@ -1,22 +1,39 @@
-name: AV App
+name: Python Build and Test Workflow
 
 on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-    run-python-script:
-        runs-on: ubuntu-latest
+  build:
+    runs-on: ubuntu-latest
 
-        steps:
-          - name: Checkout code
-            uses: actions/checkout@v2
-        
-          - name: Set up Python
-            uses: actions/setup-python@v5
-            with:
-                python-version: '3.13.1'
-        
-          - name: Run print_requirements.py
-            run: python print_requirements.py
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.13.1'  # Adjust the Python version as required
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install customtkinter pandas  # Install the necessary libraries
+        pip install pytest  # Install pytest for testing
+
+    - name: Run tests
+      run: |
+        # Assuming you have a test file, or you can add one later.
+        # You might need to modify the paths or test cases as required
+        pytest  # Run tests with pytest (if you have any tests)
+
+    - name: Check if the app runs without errors
+      run: |
+        # Run the script to ensure there are no runtime errors during execution
+        python path_to_your_script.py  # Adjust path accordingly
