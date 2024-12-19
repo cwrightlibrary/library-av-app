@@ -84,7 +84,7 @@ class OpenShowCSVFrame(customtkinter.CTkFrame):
         # Show the CSV in a textbox
         self.preview_window_textbox = customtkinter.CTkTextbox(self.preview_window, font=customtkinter.CTkFont(family='Consolas'), corner_radius=4)
         self.preview_window_textbox.grid(row=1, column=0, padx=10, pady=10, sticky='nsew')
-        self.preview_window_textbox.insert('0.0', self.parent.csv_df)
+        self.preview_window_textbox.insert('0.0', self.parent.csv_df.head())
 
 
 # CSV Reader App
