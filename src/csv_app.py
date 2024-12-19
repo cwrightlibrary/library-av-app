@@ -20,14 +20,36 @@ class PreviewCSV(customtkinter.CTkToplevel):
         self.attributes('-topmost', 1)
         self.lift()
         
-        # TO-DO: Update this
-        self.segmented_button = customtkinter.CTkSegmentedButton(self, values=['Row1', 'Row2', 'Row3'])
-        self.segmented_button.grid(row=0, column=0, padx=10, pady=10, sticky='nsew')
+        # Get the AV issues from the CSV
+        self.av_issues_rows = []
+        
+        # Create a list for each issue
+        # issue = ['title', [csv_info]]
+        for d in self.parent.csv_dict:
+            title_values = [list(d.values())]
+            for k, v in d.items():
+                if k == "item-name":
+                    title_values.insert(0, v)
+            self.av_issues_rows.append(title_values)
+        
+        # Create a list of all of the titles
+        self.av_issues_titles = [item[0] for item in self.av_issues_rows]
+        # Segmented button with the titles for the names of each button segment
+        self.av_issues_segmented_button = customtkinter.CTkSegmentedButton(self, values=self.av_issues_titles, command=self.update_av_issues_segmented_button)
+        self.av_issues_segmented_button.set(self.av_issues_titles[0])
+        self.av_issues_segmented_button.grid(row=0, column=0, padx=10, pady=10, sticky='nsew')
         
         # Show the CSV in a textbox
-        self_textbox = customtkinter.CTkTextbox(self, font=customtkinter.CTkFont(family='Consolas'), corner_radius=4)
-        self_textbox.grid(row=1, column=0, padx=10, pady=10, sticky='nsew')
-        self_textbox.insert('0.0', self.parent.csv_df.loc[0])
+        self.textbox = customtkinter.CTkTextbox(self, font=customtkinter.CTkFont(family='Consolas'), corner_radius=4)
+        self.textbox.grid(row=1, column=0, padx=10, pady=10, sticky='nsew')
+        self.textbox.insert('0.0', self.av_issues_rows[0][1])
+    
+    # TODO: Update this
+    def update_av_issues_segmented_button(self):
+        current_issue = self.av_issues_segmented_button.get()
+        current_issue_index = self.av_issues_rows.index(current_issue)
+        self.textbox.delete('0.0', 'end')
+        self.textbox.insert('0.0', "\n".join(self.av_issues_rows[current_issue_index][1]))
 
 
 # Buttons for the App
@@ -77,7 +99,7 @@ class OpenShowCSVFrame(customtkinter.CTkFrame):
             initialdir=current_dir,
         )
         # Disable the open CSV button and enable the preview CSV button
-        # TO-DO: Remove this in the future
+        # TODO: Remove this in the future
         self.parent.open_csv()
 
     # Preview the CSV
@@ -135,7 +157,7 @@ class AVApp(customtkinter.CTk):
             print(f'Success! Loaded "{self.csv_path}".')
 
             # Create dict
-            self.csv_dict = self.csv_df.to_dict()
+            self.csv_dict = self.csv_df.to_dict(orient='records')
             print('Created dictionary from CSV data')
         # If the file path is invalid
         except FileNotFoundError:
