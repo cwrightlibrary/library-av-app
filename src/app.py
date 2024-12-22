@@ -3,7 +3,6 @@ import pandas as pd
 
 
 customtkinter.set_appearance_mode('System')
-customtkinter.set_appearance_mode('Dark')
 customtkinter.set_default_color_theme('blue')
 
 
@@ -34,8 +33,11 @@ class App(customtkinter.CTk):
         self.sidebar_button_load_csv.grid(row=3, column=0, padx=20, pady=10)
         self.appearance_mode_label = customtkinter.CTkLabel(self.sidebar_frame, text='Appearance Mode:', anchor='w')
         self.appearance_mode_label.grid(row=5, column=0, padx=20, pady=(10, 0))
-        self.appearance_mode_optionmenu = customtkinter.CTkOptionMenu(self.sidebar_frame, values=['Light', 'Dark', 'System'], command=self.change_appearance_mode_event)
+        self.appearance_mode_optionmenu = customtkinter.CTkOptionMenu(self.sidebar_frame, values=['System', 'Light', 'Dark'], command=self.change_appearance_mode_event)
         self.appearance_mode_optionmenu.grid(row=6, column=0, padx=20, pady=(10, 10))
+    
+    def change_appearance_mode_event(self, new_appearance_mode: str):
+        customtkinter.set_appearance_mode(new_appearance_mode)
 
 
 if __name__ == '__main__':
