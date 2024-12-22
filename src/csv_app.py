@@ -78,33 +78,59 @@ class PreviewCSV(customtkinter.CTkToplevel):
         self.textbox.insert("0.0", textbox_text)
 
 
+import customtkinter
+import pandas as pd
+
 class NewCSV(customtkinter.CTkToplevel):
     def __init__(self, master, parent):
         super().__init__(master)
         self.parent = parent
 
         self.title("New CSV")
-        self.geometry("400x800")
-
+        self.geometry("400x600")  # Adjusted to more reasonable size
         self.attributes("-topmost", 1)
         self.lift()
         
-        self.input_keys = parent.csv_df.columns.tolist()
-        print(self.input_keys)
-        self.input_keys_rows = tuple(index for index, _ in enumerate(self.input_keys))
-        self.input_keys_rows += (self.input_keys_rows[-1] + 1,)
-        
-        self.input_values = []
-        
+        # Initialize input data
+        self.input_keys = parent.csv_df.columns.tolist()  # Get the column names
+        self.input_buttons = []  # List to store the entry widgets
+
+        # Grid configuration for the main window
         self.grid_columnconfigure(0, weight=1)
-        self.grid_rowconfigure(self.input_keys_rows, weight=1)
+        self.grid_rowconfigure((0, 1, 2, 3), weight=1)
         
-        self.new_csv_label = customtkinter.CTkLabel(self, text="New AV Issues CSV")
-        self.new_csv_label.grid(row=0, column=0, padx=10, pady=10, sticky="new")
+        # Input frame
+        self.input_frame = customtkinter.CTkScrollableFrame(self)
+        self.input_frame.grid(row=0, column=0, padx=10, pady=10, sticky='nsew')
+        self.input_frame.grid_columnconfigure(0, weight=1)
+
+        # Title Label
+        self.new_csv_label = customtkinter.CTkLabel(self.input_frame, text="New AV Issues CSV")
+        self.new_csv_label.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
+
+        # Create input fields dynamically based on column names
+        for idx, key in enumerate(self.input_keys):
+            input_value_entry = customtkinter.CTkEntry(self.input_frame, placeholder_text=key)
+            input_value_entry.grid(row=idx+1, column=0, padx=10, pady=10, sticky="ew")
+            self.input_buttons.append(input_value_entry)
         
-        for k in range(len(self.input_keys)):
-            input_value_entry = customtkinter.CTkEntry(self, placeholder_text=self.input_keys[k])
-            input_value_entry.grid(row=k+1, column=0, padx=10, pady=10, sticky="ew")
+        self.create_frame = customtkinter.CTkFrame(self, height=50)
+        self.create_frame.grid(row=1, column=0, padx=10, pady=10, sticky='new')
+        self.create_frame.grid_columnconfigure(0, weight=1)
+
+        # "Create" Button
+        self.button_create_new = customtkinter.CTkButton(self.create_frame, text="Create", command=self.create_new_csv)
+        self.button_create_new.grid(row=len(self.input_keys) + 1, column=0, padx=10, pady=10, sticky="sew")
+
+    def create_new_csv(self):
+        # Collect values from the input fields and create a dictionary
+        input_values = {key: button.get() for key, button in zip(self.input_keys, self.input_buttons)}
+
+        # Create DataFrame and save to CSV
+        input_df = pd.DataFrame([input_values])
+        input_df.to_csv('src/test.csv', index=False)
+        self.destroy()
+
 
 
 # Buttons for the App
