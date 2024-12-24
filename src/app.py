@@ -12,13 +12,13 @@ class App(customtkinter.CTk):
         self.width, self.height = 1100, 580
         self.title('AV Issues')
         self.geometry(f'{self.width}x{self.height}')
-        
+
         self.csv_path = None
         self.csv_df = None
         self.csv_dict = None
-        
+
         self.import_csv_data()
-        
+
         self.av_keys = []
         for key, value in enumerate(self.csv_dict[0]):
             self.av_keys.append(value.replace('-', ' ').title())
@@ -74,13 +74,13 @@ class App(customtkinter.CTk):
         )
         self.scaling_optionmenu.set('100%')
         self.scaling_optionmenu.grid(row=8, column=0, padx=20, pady=(10, 20))
-        
+
         self.csv_viewer_frame = customtkinter.CTkFrame(self)
         self.csv_viewer_frame.grid(row=0, column=1, padx=20, pady=20, rowspan=4, sticky='nsew')
-        
+
         self.csv_viewer_frame.grid_columnconfigure((0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14), weight=1)
         self.csv_viewer_frame.grid_rowconfigure((0, 1, 2), weight=1)
-        
+
         for i in range(len(self.av_keys)):
             key_label = customtkinter.CTkLabel(self.csv_viewer_frame, text=self.av_keys[i])
             key_label.grid(row=0, column=i, padx=10, pady=10, sticky='new')
@@ -91,7 +91,7 @@ class App(customtkinter.CTk):
     def change_scaling_event(self, new_scaling: str):
         new_scaling_float = int(new_scaling.replace('%', '')) / 100
         customtkinter.set_widget_scaling(new_scaling_float)
-    
+
     def import_csv_data(self):
         try:
             self.csv_path = 'src/updated_av_issues.csv'
@@ -102,6 +102,6 @@ class App(customtkinter.CTk):
             print('Error loading file path. Try creating a new CSV file.')
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app = App()
     app.mainloop()
