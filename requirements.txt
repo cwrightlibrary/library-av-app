@@ -1,5 +1,6 @@
 customtkinter==5.2.2
 darkdetect==0.8.0
+future==1.0.0
 numpy==2.2.0
 packaging==24.2
 pandas==2.2.3
