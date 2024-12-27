@@ -1,11 +1,14 @@
 import json
 import os
 import pandas as pd
+import platform
+import pyglet
 import tkinter as tk
 from converters import Converter
+from custom_windows import CustomWindow
 from datetime import date
 from mit_license import mit_license
-from tkinter import filedialog, messagebox
+from tkinter import filedialog, messagebox, PhotoImage
 
 class App(tk.Tk):
 	def __init__(self, width: int = 800, height: int = 600):
@@ -17,26 +20,33 @@ class App(tk.Tk):
 		self.title(self.name)
 		self.geometry(f"{self.width}x{self.height}")
 
-		# Load recent files
+		# Set window icon based on the operating system
+		if platform.system() == "Windows":
+			self.iconbitmap(default="src/icon.ico")
+		else:
+			self._icon = PhotoImage(file="src/icon.png")
+			self.iconphoto(True, self._icon)
+
+		# Load recent files from JSON file
 		self.recent_files = self.load_recent_files()
 
 		# Set up the menu bar
 		self.setup_menubar()
 
-		self.current_file_path = None
-		self.table = None
-		self.df = None
+		self.current_file_path = None  # Path of the currently opened file
+		self.table = None  # Table widget to display CSV data
+		self.df = None  # DataFrame to hold CSV data
 
-		# Configure grid layout
+		# Configure grid layout for the main window
 		self.grid_rowconfigure(0, weight=1)
 		self.grid_columnconfigure(0, weight=1)
 
-		# Set up table frame
+		# Set up frame to hold the table
 		self.table_frame = tk.Frame()
 		self.table_frame.grid(row=0, column=0, padx=0, pady=0, sticky="nsew")
 		self.table_frame.grid_rowconfigure(0, weight=1)
 		self.table_frame.grid_columnconfigure(0, weight=1)
-		
+
 		# Open the most recent file if available
 		if self.recent_files:
 			self.open_csv_from_recent(self.recent_files[0])
@@ -44,14 +54,16 @@ class App(tk.Tk):
 
 	def setup_menubar(self):
 		# Application metadata
-		self._app_name = 'AV Issues'
+		self._app_name = "AV Issues"
 		self._author = "Chris Wright"
 		self._organization = "Richland Library"
 		self._sub_organization = "St. Andrews Branch"
 		self._current_year = date.today().year
 		self._version = "0.0.1"
 		self._license = f"{self.name} v{self._version} is under the MIT license:"
-		self._mit_license = mit_license(self._current_year, self._author, self._organization, self._sub_organization)
+		self._mit_license = mit_license(
+			self._current_year, self._author, self._organization, self._sub_organization
+		)
 
 		# Create the menu bar
 		self.menubar = tk.Menu(self)
@@ -109,7 +121,11 @@ class App(tk.Tk):
 			f"This product is licensed under the MIT Permissive License:\n"
 		)
 		about_av_issues_string += self._mit_license
-		messagebox.showinfo("About AV Issues", about_av_issues_string)
+		# Display custom info window with application details
+		cw = CustomWindow()
+		cw.custom_showinfo(
+			"About AV Issues", "src/icon_128.png", about_av_issues_string
+		)
 
 	def open_csv(self):
 		# Open a CSV file and display its contents
@@ -150,6 +166,11 @@ class App(tk.Tk):
 		self.table_frame.grid_rowconfigure(0, weight=1)
 		self.table_frame.grid_columnconfigure(0, weight=1)
 
+		# Bind scroll events
+		self.canvas.bind_all('<MouseWheel>', self._on_mousewheel)
+		self.canvas.bind_all('<Shift-MouseWheel>', self._on_shift_mousewheel)
+		self.canvas.bind_all('<Control-MouseWheel>', self._on_ctrl_mousewheel)
+
 		# Populate table with data
 		for i, col in enumerate(self.df.columns):
 			label = tk.Label(self.table, text=col, borderwidth=0, relief="solid")
@@ -159,6 +180,9 @@ class App(tk.Tk):
 			for j, value in enumerate(row):
 				entry = tk.Entry(self.table, borderwidth=1, relief="flat")
 				entry.insert(0, value)
+				if entry.get() == "NaN":
+					entry.delete(0, tk.END)
+					entry.insert(0, "")
 				entry.grid(row=i + 1, column=j, padx=0, pady=0)
 				entry.bind(
 					"<FocusOut>", lambda e, row=i, col=j: self.update_value(e, row, col)
@@ -168,6 +192,15 @@ class App(tk.Tk):
 
 		self.table.update_idletasks()
 		self.canvas.config(scrollregion=self.canvas.bbox("all"))
+
+	def _on_mousewheel(self, event):
+		self.canvas.yview_scroll(int(-1*(event.delta/120)), 'units')
+	
+	def _on_shift_mousewheel(self, event):
+		self.canvas.xview_scroll(int(-1*(event.delta/120)), 'units')
+
+	def _on_ctrl_mousewheel(self, event):
+		self.canvas.xview_scroll(int(-1*(event.delta/120)), 'units')
 
 	def update_value(self, event, row, col):
 		# Update the value in the DataFrame when the user edits a cell
