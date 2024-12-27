@@ -15,3 +15,6 @@ class Converter:
         
         df = pd.read_excel(excel_path, sheet_name=sheet_name)
         df.to_csv(csv_path, index=False)
+
+app = Converter()
+app.excel_to_csv(excel_path='src/av_issues.xlsx', sheet_name='av_issues', csv_path='src/av_issues.csv')
