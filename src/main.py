@@ -17,9 +17,9 @@ class AVApp(tk.Tk):
 		self.geometry(f"{self.width}x{self.height}")
 		
 		if platform.system() == "Windows":
-			self.iconbitmap(default="src/icon_128.ico")
+			self.iconbitmap(default="src/icons/icon_128.ico")
 		else:
-			self.app_icon = PhotoImage(file="src/icon_128.png")
+			self.app_icon = PhotoImage(file="src/icons/icon_128.png")
 			self.iconphoto(True, self.app_icon)
 		
 		self.recent_files = self.load_recent_files()
@@ -99,7 +99,7 @@ class AVApp(tk.Tk):
 		about_string += self.app_mit_license
 		
 		about_window = CustomWindow()
-		about_window.custom_showinfo("About AV Issues", "src/icon_128.png", about_string)
+		about_window.custom_showinfo("About AV Issues", "src/icons/icon_128.png", about_string)
 	
 	def open_csv(self):
 		file_path = filedialog.askopenfile(filetypes=[("CSV Files", "*.csv")])
