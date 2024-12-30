@@ -6,16 +6,18 @@ Using CSV files and python to keep track of and analyze AV problems at the libra
 
 * [ ] Add `main.py` and move the code from `base_tk_app.py`, refactoring it to work better
 * [ ] When showing the csv information, only show:
-  * [ ] **active** issues
+  * [ ] **active**
   * [ ] **item-name**
   * [ ] **item-type**
   * [ ] **customer-name**
   * [ ] **item-todo** *(if enough space)*
+* [ ] Create a theme for all `tkinter` widgets that works in light and dark mode
+* [ ] Create a new icon that's more *mac-like*
 
 ## ✨ Features
 
-- Data processing with `pandas`
-- A modern, responsive GUI with `customtkinter` to edit and create CSV files
+- Data processing with `pandas` and `csv`
+- A modern, responsive GUI with `tkinter` to edit and create CSV files
 - Deadline and update driven to increase productivity and flow
 
 ## 🔨 Installation
