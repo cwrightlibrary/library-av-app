@@ -24,16 +24,16 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install customtkinter pandas  # Install the necessary libraries
+        pip install -r requirements.txt  # Install the necessary libraries
         pip install pytest  # Install pytest for testing
 
     - name: Run tests
       run: |
         # Assuming you have a test file, or you can add one later.
         # You might need to modify the paths or test cases as required
-        pytest src/csv_app.py # Run tests with pytest (if you have any tests)
+        pytest src/test_main.py # Run tests with pytest (if you have any tests)
 
     - name: Check if the app runs without errors
       run: |
         # Run the script to ensure there are no runtime errors during execution
-        python path_to_your_script.py  # Adjust path accordingly
+        python src/main_test.py  # Adjust path accordingly
