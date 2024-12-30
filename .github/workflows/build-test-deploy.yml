@@ -1,39 +1,25 @@
-name: Python Build and Test Workflow
+name: Build and Test
 
 on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
 
 jobs:
-  build:
-    runs-on: windows-latest
+  build-and-test:
+    runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.13.1'  # Adjust the Python version as required
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt  # Install the necessary libraries
-        pip install pytest  # Install pytest for testing
+      - name: Install dependencies
+        run: pip install -r src/requirements.txt
 
-    - name: Run tests
-      run: |
-        # Assuming you have a test file, or you can add one later.
-        # You might need to modify the paths or test cases as required
-        pytest src/test_main.py # Run tests with pytest (if you have any tests)
-
-    - name: Check if the app runs without errors
-      run: |
-        # Run the script to ensure there are no runtime errors during execution
-        python src/main_test.py  # Adjust path accordingly
+      - name: Run tests
+        run: python src/main.py --test
