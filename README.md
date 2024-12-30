@@ -13,7 +13,7 @@ Using CSV files and python to keep track of and analyze AV problems at the libra
   * [ ] **item-todo** *(if enough space)*
 * [ ] Create a theme for all `tkinter` widgets that works in light and dark mode
 * [x] Create a new icon that's more *mac-like*
-* [ ] 
+* [ ] Create an edit button to show the entire spreadsheet *Excel* style
 
 ## ✨ Features
 
