@@ -12,7 +12,8 @@ Using CSV files and python to keep track of and analyze AV problems at the libra
   * [ ] **customer-name**
   * [ ] **item-todo** *(if enough space)*
 * [ ] Create a theme for all `tkinter` widgets that works in light and dark mode
-* [ ] Create a new icon that's more *mac-like*
+* [x] Create a new icon that's more *mac-like*
+* [ ] 
 
 ## ✨ Features
 
