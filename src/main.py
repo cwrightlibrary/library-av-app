@@ -1,4 +1,4 @@
-import csv, json, os, platform, pyglet
+import csv, darkdetect, json, os, platform, pyglet
 import pandas as pd
 import tkinter as tk
 from converters import Converter
@@ -38,9 +38,32 @@ class AVApp(tk.Tk):
         self.frame_issues.grid(row=0, column=0, padx=0, pady=0, sticky="nsew")
         self.frame_issues.grid_rowconfigure(0, weight=1)
         self.frame_issues.grid_columnconfigure(0, weight=1)
+        
+        self._cell_font = ("#000000", "#ffffff")
+        self._cell_border = ("#d4d4d4", "#262626")
+        self._cell_bg_inactive = ("#ffffff", "#000000")
+        self._cell_bg_active = ("#e9e9e9", "#181818")
+        
+        self._library_darker = "#007492"
+        self._library_dark = "#007e9e"
+        self._library_light = "#0092b0"
+        self._library_lighter = "#00afd0"
+        
+        cdir = os.path.dirname(os.path.abspath(__file__))
+        inter_reg_path = os.path.join(cdir, "fonts", "Inter-Regular.ttf")
+        inter_bold_path = os.path.join(cdir, "fonts", "Inter-Bold.ttf")
+        pyglet.font.add_file(inter_reg_path)
+        pyglet.font.add_file(inter_bold_path)
+        
+        self.fonts = {
+            "INTER_REG": ("Inter Regular", 10),
+            "INTER_BOLD": ("Inter Bold", 10, "bold")
+        }
 
         if self.recent_files:
             self.open_csv_from_recent(self.recent_files[0])
+        else:
+            self.display_empty()
 
         self.mainloop()
 
@@ -213,6 +236,51 @@ class AVApp(tk.Tk):
                 return json.load(f)
         return []
 
+    def display_empty(self):
+        if self.table:
+            self.table.destroy()
+        
+        self.canvas = tk.Canvas(self.frame_issues)
+        
+        self.table = tk.Frame(self.canvas)
+        self.canvas.create_window((0, 0), window=self.table, anchor="nw")
+        
+        self.canvas.grid(row=0, column=0, sticky="nsew")
+        self.frame_issues.grid_rowconfigure(0, weight=1)
+        self.frame_issues.grid_columnconfigure(0, weight=1)
+        
+        headers = ["Input Date", "Item Name", "Item Barcode", "Item Type", "Item Note", "Item To-Do", "Customer", "Customer Barcode", "Previous Customer", "Previous Customer Barcode", "Staff Logged", "Item Update", "Status", "Problem Upon Checkout"]
+        
+        for i in range(len(headers)):
+            label = tk.Label(self.table, text=headers[i], borderwidth=0, bd=0, highlightthickness=0, width=14, height=2, font=self.fonts["INTER_BOLD"], bg=self._cell_bg_inactive[0], fg=self._cell_font[0])
+            label.grid(row=0, column=i, padx=0, pady=0)
+        
+        for x in range(9):
+            for y in range(20):
+                entry = tk.Text(self.table, bd=0, highlightthickness=2, width=14, height=2, font=self.fonts["INTER_REG"], bg=self._cell_bg_inactive[0], fg=self._cell_font[0])
+                entry.configure(highlightbackground=self._cell_border[0], highlightcolor=self._cell_border[0])
+                
+                entry.tag_configure("left", justify=tk.LEFT)
+                entry.insert(tk.INSERT, f"test c: {x}, r: {y}")
+                entry.tag_add("left", "1.0", "end")
+                
+                entry.grid(row=x + 1, column=y, padx=0, pady=0)
+                
+                entry.bind("<FocusIn>", lambda event, e=entry: e.configure(highlightbackground=self._library_darker, highlightcolor=self._library_darker, bg=self._cell_bg_active[0]))
+                entry.bind("<FocusOut>", lambda event, e=entry: e.configure(highlightbackground=self._cell_border[0], highlightcolor=self._cell_border[0], bg=self._cell_bg_inactive[0]))
+                
+                if darkdetect.isDark():
+                    entry.configure(bg=self._cell_bg_inactive[1], fg=self._cell_font[1], highlightbackground=self._cell_border[1], highlightcolor=self._cell_border[1])
+                    entry.bind("<FocusIn>", lambda event, e=entry: e.configure(highlightbackground=self._library_darker, highlightcolor=self._library_darker, bg=self._cell_bg_active[1]))
+                    entry.bind("<FocusOut>", lambda event, e=entry: e.configure(highlightbackground=self._cell_border[1], highlightcolor=self._cell_border[1], bg=self._cell_bg_inactive[1]))
+                else:
+                    entry.configure(bg=self._cell_bg_inactive[0], fg=self._cell_font[0], highlightbackground=self._cell_border[0], highlightcolor=self._cell_border[0])
+                    entry.bind("<FocusOut>", lambda event, e=entry: e.configure(highlightbackground=self._cell_border, highlightcolor=self._cell_border, bg=self._cell_bg_inactive[0]))
+                    entry.bind("<FocusIn>", lambda event, e=entry: e.configure(highlightbackground=self._library_darker, highlightcolor=self._library_darker, bg=self._cell_bg_active[0]))
+                    entry.bind("<FocusOut>", lambda event, e=entry: e.configure(highlightbackground=self._cell_border[0], highlightcolor=self._cell_border[0], bg=self._cell_bg_inactive[0]))
+        
+        self.table.update_idletasks()
+    
     def display_csv(self):
         if self.table:
             self.table.destroy()
