@@ -254,6 +254,11 @@ class AVApp(tk.Tk):
         for i in range(len(headers)):
             label = tk.Label(self.table, text=headers[i], borderwidth=0, bd=0, highlightthickness=0, width=14, height=2, font=self.fonts["INTER_BOLD"], bg=self._cell_bg_inactive[0], fg=self._cell_font[0])
             label.grid(row=0, column=i, padx=0, pady=0)
+            
+            if darkdetect.isDark():
+                label.configure(bg=self._cell_bg_inactive[1], fg=self._cell_font[1])
+            else:
+                label.configure(bg=self._cell_bg_inactive[0], fg=self._cell_font[0])
         
         for x in range(9):
             for y in range(20):
